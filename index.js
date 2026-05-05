@@ -1,32 +1,16 @@
 const express = require("express");
+const connectDB = require("./config/db");
+require("dotenv").config();
+
 const app = express();
+
+connectDB();
 
 app.use(express.json());
 
-let users = []; 
+app.use("/api/users", require("./routes/users.route"));
+app.use("/api/posts", require("./routes/posts.route"));
 
-app.post("/users", (req, res) => {
-  const user = req.body;
-  users.push(user);
-  res.status(201).json({ message: "User created", user });
-});
+const PORT = process.env.PORT || 5000;
 
-app.get("/users", (req, res) => {
-  res.json(users);
-});
-
-app.put("/users/:id", (req, res) => {
-  const id = req.params.id;
-  users[id] = req.body;
-  res.json({ message: "User updated", user: users[id] });
-});
-
-app.delete("/users/:id", (req, res) => {
-  const id = req.params.id;
-  users.splice(id, 1);
-  res.json({ message: "User deleted" });
-});
-
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
